@@ -1,0 +1,12 @@
+import 'package:bloc/bloc.dart';
+import 'package:rxdart/rxdart.dart';
+
+EventTransformer<T> debounce<T>(
+    Duration duration,
+    ) {
+  return (events, mapper) {
+    return events
+        .debounceTime(duration)
+        .switchMap(mapper);
+  };
+}

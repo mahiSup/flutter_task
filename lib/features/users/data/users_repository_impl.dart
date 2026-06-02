@@ -138,4 +138,34 @@ class UsersRepositoryImpl
       );
     }
   }
+
+  @override
+  Future<Either<Failure, List<GithubUser>>> searchUsers(
+      String query,
+      ) async {
+    try {
+      if (query.trim().isEmpty) {
+        return const Right([]);
+      }
+
+      if (!await networkInfo.isConnected) {
+        return const Left(
+          NetworkFailure(
+            'No Internet Connection',
+          ),
+        );
+      }
+
+      final users =
+      await remoteDataSource.searchUsers(
+        query.trim(),
+      );
+
+      return Right(users);
+    } catch (e) {
+      return Left(
+        ErrorHandler.handle(e),
+      );
+    }
+  }
 }

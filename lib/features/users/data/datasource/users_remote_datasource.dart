@@ -12,6 +12,9 @@ abstract class UsersRemoteDataSource {
   Future<UserDetailModel> getUserDetails(
       String username,
       );
+
+  Future<List<GithubUserModel>>
+  searchUsers(String query);
 }
 
 class UsersRemoteDataSourceImpl
@@ -60,5 +63,20 @@ class UsersRemoteDataSourceImpl
         'Failed to fetch details',
       );
     }
+  }
+
+  @override
+  Future<List<GithubUserModel>>
+  searchUsers(String query) async {
+
+    final response = await dio.get(
+      ApiEndpoints.searchUsers(query),
+    );
+
+    return (response.data['items'] as List)
+        .map(
+          (e) => GithubUserModel.fromJson(e),
+    )
+        .toList();
   }
 }

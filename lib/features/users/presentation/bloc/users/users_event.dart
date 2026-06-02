@@ -18,7 +18,9 @@ class RefreshUsersEvent extends UsersEvent {
 class SearchUsersEvent extends UsersEvent {
   final String query;
 
-  const SearchUsersEvent(this.query);
+  const SearchUsersEvent(
+      this.query,
+      );
 
   @override
   List<Object?> get props => [query];

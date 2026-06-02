@@ -17,6 +17,7 @@ import '../features/users/domain/usecases/get_favorites.dart';
 import '../features/users/domain/usecases/save_favorite.dart';
 import '../features/users/domain/usecases/remove_favorite.dart';
 
+import '../features/users/domain/usecases/search_users.dart';
 import '../features/users/presentation/bloc/users/users_bloc.dart';
 import '../features/users/presentation/bloc/user_detail/user_detail_bloc.dart';
 import '../features/users/presentation/bloc/favorites/favorites_bloc.dart';
@@ -86,12 +87,22 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton(
         () => GetFavorites(sl()),
   );
+  sl.registerLazySingleton(
+        () => SearchUsers(sl()),
+  );
 
   sl.registerFactory(
         () => UsersBloc(
       getUsers: sl(),
+      searchUsers: sl(),
     ),
   );
+
+  // sl.registerFactory(
+  //       () => UsersBloc(
+  //     getUsers: sl(),
+  //   ),
+  // );
 
   sl.registerFactory(
         () => UserDetailBloc(

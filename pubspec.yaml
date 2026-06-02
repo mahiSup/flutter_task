@@ -41,6 +41,8 @@ dependencies:
   # Utilities
   flutter_screenutil: ^5.9.3
 
+  rxdart: ^0.28.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
