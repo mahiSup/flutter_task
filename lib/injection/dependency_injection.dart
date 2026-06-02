@@ -3,10 +3,17 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:github_user_explorer/core/constants/constants.dart';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dio/dio.dart';
+import 'package:get_it/get_it.dart';
+
+import '../core/constants/constants.dart';
+import '../core/network/dio_client.dart';
 import '../core/network/network_info.dart';
 
 import '../features/users/data/datasource/users_local_datasource.dart';
 import '../features/users/data/datasource/users_remote_datasource.dart';
+
 
 import '../features/users/data/users_repository_impl.dart';
 import '../features/users/domain/repositories/users_repository.dart';
@@ -16,8 +23,8 @@ import '../features/users/domain/usecases/get_user_details.dart';
 import '../features/users/domain/usecases/get_favorites.dart';
 import '../features/users/domain/usecases/save_favorite.dart';
 import '../features/users/domain/usecases/remove_favorite.dart';
-
 import '../features/users/domain/usecases/search_users.dart';
+
 import '../features/users/presentation/bloc/users/users_bloc.dart';
 import '../features/users/presentation/bloc/user_detail/user_detail_bloc.dart';
 import '../features/users/presentation/bloc/favorites/favorites_bloc.dart';
@@ -25,96 +32,105 @@ import '../features/users/presentation/bloc/favorites/favorites_bloc.dart';
 final sl = GetIt.instance;
 
 Future<void> initDependencies() async {
-  sl.registerLazySingleton(
-        () => Dio(
-      BaseOptions(
-        baseUrl:
-        Constants.baseURL,
-      ),
-    ),
+
+  /// Dio Client
+  sl.registerLazySingleton<DioClient>(
+        () => DioClient(),
   );
 
-  sl.registerLazySingleton(
+  /// Dio Instance
+  sl.registerLazySingleton<Dio>(
+        () => sl<DioClient>().dio,
+  );
+
+  /// Connectivity
+  sl.registerLazySingleton<Connectivity>(
     Connectivity.new,
   );
 
-  sl.registerLazySingleton<
-      NetworkInfo>(
+  /// NetworkInfo
+  sl.registerLazySingleton<NetworkInfo>(
         () => NetworkInfoImpl(
-      sl(),
+      sl<Connectivity>(),
     ),
   );
 
-  sl.registerLazySingleton<
-      UsersRemoteDataSource>(
-        () =>
-        UsersRemoteDataSourceImpl(
-          sl(),
-        ),
+  /// Data Sources
+  sl.registerLazySingleton<UsersRemoteDataSource>(
+        () => UsersRemoteDataSourceImpl(
+      sl<Dio>(),
+    ),
   );
 
-  sl.registerLazySingleton<
-      UsersLocalDataSource>(
-        () =>
-        UsersLocalDataSourceImpl(),
+  sl.registerLazySingleton<UsersLocalDataSource>(
+        () => UsersLocalDataSourceImpl(),
   );
 
-  sl.registerLazySingleton<
-      UsersRepository>(
+  /// Repository
+  sl.registerLazySingleton<UsersRepository>(
         () => UsersRepositoryImpl(
-      remoteDataSource: sl(),
-      localDataSource: sl(),
-      networkInfo: sl(),
+      remoteDataSource: sl<UsersRemoteDataSource>(),
+      localDataSource: sl<UsersLocalDataSource>(),
+      networkInfo: sl<NetworkInfo>(),
     ),
   );
 
-  sl.registerLazySingleton(
-        () => GetUsers(sl()),
+  /// Use Cases
+  sl.registerLazySingleton<GetUsers>(
+        () => GetUsers(
+      sl<UsersRepository>(),
+    ),
   );
 
-  sl.registerLazySingleton(
-        () => GetUserDetails(sl()),
+  sl.registerLazySingleton<GetUserDetails>(
+        () => GetUserDetails(
+      sl<UsersRepository>(),
+    ),
   );
 
-  sl.registerLazySingleton(
-        () => SaveFavorite(sl()),
+  sl.registerLazySingleton<SearchUsers>(
+        () => SearchUsers(
+      sl<UsersRepository>(),
+    ),
   );
 
-  sl.registerLazySingleton(
-        () => RemoveFavorite(sl()),
+  sl.registerLazySingleton<SaveFavorite>(
+        () => SaveFavorite(
+      sl<UsersRepository>(),
+    ),
   );
 
-  sl.registerLazySingleton(
-        () => GetFavorites(sl()),
-  );
-  sl.registerLazySingleton(
-        () => SearchUsers(sl()),
+  sl.registerLazySingleton<RemoveFavorite>(
+        () => RemoveFavorite(
+      sl<UsersRepository>(),
+    ),
   );
 
-  sl.registerFactory(
+  sl.registerLazySingleton<GetFavorites>(
+        () => GetFavorites(
+      sl<UsersRepository>(),
+    ),
+  );
+
+  /// BLoCs
+  sl.registerFactory<UsersBloc>(
         () => UsersBloc(
-      getUsers: sl(),
-      searchUsers: sl(),
+      getUsers: sl<GetUsers>(),
+      searchUsers: sl<SearchUsers>(),
     ),
   );
 
-  // sl.registerFactory(
-  //       () => UsersBloc(
-  //     getUsers: sl(),
-  //   ),
-  // );
-
-  sl.registerFactory(
+  sl.registerFactory<UserDetailBloc>(
         () => UserDetailBloc(
-      getUserDetails: sl(),
+      getUserDetails: sl<GetUserDetails>(),
     ),
   );
 
-  sl.registerFactory(
+  sl.registerFactory<FavoritesBloc>(
         () => FavoritesBloc(
-      saveFavorite: sl(),
-      removeFavorite: sl(),
-      getFavorites: sl(),
+      saveFavorite: sl<SaveFavorite>(),
+      removeFavorite: sl<RemoveFavorite>(),
+      getFavorites: sl<GetFavorites>(),
     ),
   );
 }

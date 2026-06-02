@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'core/utils/app_bloc_observer.dart';
 import 'routes/app_router.dart';
 import 'injection/dependency_injection.dart';
 
@@ -16,6 +17,9 @@ Future<void> main() async {
   await Hive.initFlutter();
 
   await initDependencies();
+
+  Bloc.observer =
+      AppBlocObserver();
 
   runApp(const MyApp());
 }
