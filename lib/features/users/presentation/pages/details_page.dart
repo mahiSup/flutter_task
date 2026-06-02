@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:github_user_explorer/core/utils/extensions.dart';
 
 import '../bloc/user_detail/user_detail_bloc.dart';
 import '../bloc/user_detail/user_detail_event.dart';
 import '../bloc/user_detail/user_detail_state.dart';
 
+import '../widgets/full_screen_image_viewer.dart';
 import '../widgets/loading_widget.dart';
 import '../widgets/error_widget.dart';
 
@@ -41,7 +43,7 @@ class _DetailsPageState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.username),
+        title: Text(widget.username.capitalizeWords()),
       ),
       body: BlocBuilder<
           UserDetailBloc,
@@ -65,18 +67,30 @@ class _DetailsPageState
               const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  CircleAvatar(
-                    radius: 60,
-                    backgroundImage:
-                    CachedNetworkImageProvider(
-                      user.avatarUrl,
+                  GestureDetector(
+                    onTap: () {
+                      _showProfileImage(
+                        context,
+                        user.avatarUrl,
+                        user.login.capitalizeWords(),
+                      );
+                    },
+                    child: Hero(
+                      tag: user.avatarUrl,
+                      child: CircleAvatar(
+                        radius: 60,
+                        backgroundImage:
+                        CachedNetworkImageProvider(
+                          user.avatarUrl,
+                        ),
+                      ),
                     ),
                   ),
 
                   const SizedBox(height: 20),
 
                   Text(
-                    user.login,
+                    user.login.capitalizeWords(),
                     style:
                     const TextStyle(
                       fontSize: 24,
@@ -126,7 +140,7 @@ class _DetailsPageState
             );
           }
 
-          return const SizedBox();
+          return const SizedBox.shrink();
         },
       ),
     );
@@ -154,6 +168,22 @@ class _DetailsPageState
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _showProfileImage(
+      BuildContext context,
+      String imageUrl,
+      String username,
+      ) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => FullScreenImagePage(
+          imageUrl: imageUrl,
+          username: username,
         ),
       ),
     );

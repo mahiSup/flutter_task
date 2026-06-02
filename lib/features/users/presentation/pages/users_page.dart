@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:github_user_explorer/core/utils/extensions.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/constants.dart';
@@ -121,7 +122,7 @@ class _UsersPageState extends State<UsersPage> {
 
               AppSnackBar.success(
                 context,
-                '${user.login} added to favorites',
+                '${user.login.capitalizeWords()} added to favorites',
               );
             },
           );

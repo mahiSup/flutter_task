@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:github_user_explorer/core/utils/extensions.dart';
 
 import '../../domain/entities/github_user.dart';
 
@@ -30,7 +31,7 @@ class UserTile extends StatelessWidget {
             user.avatarUrl,
           ),
         ),
-        title: Text(user.login),
+        title: Text(user.login.capitalizeWords()),
         subtitle: Text(
           user.htmlUrl,
           maxLines: 1,
