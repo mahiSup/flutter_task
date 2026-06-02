@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:github_user_explorer/core/utils/extensions.dart';
 import '../../../domain/usecases/get_favorites.dart';
+import '../../../domain/usecases/is_favorite.dart';
 import '../../../domain/usecases/remove_favorite.dart';
 import '../../../domain/usecases/save_favorite.dart';
 import 'favorites_event.dart';
@@ -11,11 +13,13 @@ class FavoritesBloc
   final SaveFavorite saveFavorite;
   final RemoveFavorite removeFavorite;
   final GetFavorites getFavorites;
+  final IsFavorite isFavorite;
 
   FavoritesBloc({
     required this.saveFavorite,
     required this.removeFavorite,
     required this.getFavorites,
+    required this.isFavorite,
   }) : super(FavoritesInitial()) {
     on<LoadFavoritesEvent>(
       _loadFavorites,
@@ -61,10 +65,45 @@ class FavoritesBloc
       AddFavoriteEvent event,
       Emitter<FavoritesState> emit,
       ) async {
-    await saveFavorite(event.user);
+    final exists =
+    await isFavorite(
+      event.user.id,
+    );
 
-    add(
-      const LoadFavoritesEvent(),
+    if (exists) {
+      emit(
+        FavoriteAlreadyExists(
+          '${event.user.login.capitalizeWords()} is already in favorites',
+        ),
+      );
+
+      return;
+    }
+
+    final result =
+    await saveFavorite(
+      event.user,
+    );
+
+    result.fold(
+          (failure) {
+        emit(
+          FavoritesError(
+            failure.message,
+          ),
+        );
+      },
+          (_) {
+        emit(
+          FavoriteAdded(
+            '${event.user.login.capitalizeWords()} added to favorites',
+          ),
+        );
+
+        add(
+          const LoadFavoritesEvent(),
+        );
+      },
     );
   }
 
@@ -72,12 +111,30 @@ class FavoritesBloc
       RemoveFavoriteEvent event,
       Emitter<FavoritesState> emit,
       ) async {
+    final result =
     await removeFavorite(
       event.userId,
     );
 
-    add(
-      const LoadFavoritesEvent(),
+    result.fold(
+          (failure) {
+        emit(
+          FavoritesError(
+            failure.message,
+          ),
+        );
+      },
+          (_) {
+        emit(
+          const FavoriteRemoved(
+            'Favorite removed successfully',
+          ),
+        );
+
+        add(
+          const LoadFavoritesEvent(),
+        );
+      },
     );
   }
 }

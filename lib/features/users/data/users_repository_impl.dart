@@ -168,4 +168,13 @@ class UsersRepositoryImpl
       );
     }
   }
+
+  @override
+  Future<bool> isFavorite(
+      int userId,
+      ) async {
+    return localDataSource.isFavorite(
+      userId,
+    );
+  }
 }

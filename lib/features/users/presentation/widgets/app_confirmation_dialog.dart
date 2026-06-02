@@ -31,7 +31,7 @@ class AppConfirmationDialog {
             ),
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: Colors.red,
+                backgroundColor: Colors.black38,
               ),
               onPressed: () {
                 Navigator.pop(
@@ -50,7 +50,7 @@ class AppConfirmationDialog {
   }
 }
 
-class AppSnackBar {
+class AppSnackBarCustom {
   static void success(
       BuildContext context,
       String message,

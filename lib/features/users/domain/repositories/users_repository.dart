@@ -24,4 +24,8 @@ abstract class UsersRepository {
 
   Future<Either<Failure,List<GithubUser>>>
   searchUsers(String query);
+
+  Future<bool> isFavorite(
+      int userId,
+      );
 }

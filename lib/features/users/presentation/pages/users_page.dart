@@ -5,7 +5,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/constants.dart';
 
-import '../../../../injection/dependency_injection.dart';
+import '../../../../core/utils/app_snackbar.dart';
+import '../bloc/favorites/favorites_state.dart';
 import '../bloc/users/users_bloc.dart';
 import '../bloc/users/users_event.dart';
 import '../bloc/users/users_state.dart';
@@ -13,7 +14,6 @@ import '../bloc/users/users_state.dart';
 import '../bloc/favorites/favorites_bloc.dart';
 import '../bloc/favorites/favorites_event.dart';
 
-import '../widgets/app_confirmation_dialog.dart';
 import '../widgets/loading_widget.dart';
 import '../widgets/error_widget.dart';
 import '../widgets/empty_widget.dart';
@@ -119,11 +119,6 @@ class _UsersPageState extends State<UsersPage> {
               context.read<FavoritesBloc>().add(
                 AddFavoriteEvent(user),
               );
-
-              AppSnackBar.success(
-                context,
-                '${user.login.capitalizeWords()} added to favorites',
-              );
             },
           );
         },
@@ -144,66 +139,98 @@ class _UsersPageState extends State<UsersPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          Constants.githubUsers,
+    return BlocListener<
+        FavoritesBloc,
+        FavoritesState>(
+        listener: (
+        context,
+        state,
+    ) {
+      if (state
+      is FavoriteAdded) {
+        AppSnackBar.success(
+          context,
+          state.message,
+        );
+      }
+
+      if (state
+      is FavoriteAlreadyExists) {
+        AppSnackBar.warning(
+          context,
+          state.message,
+        );
+      }
+
+      if (state
+      is FavoritesError) {
+        AppSnackBar.error(
+          context,
+          state.message,
+        );
+      }
+    },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            Constants.githubUsers,
+          ),
         ),
-      ),
-      body: BlocBuilder<UsersBloc, UsersState>(
-        builder: (_, state) {
-          if (state is UsersInitial) {
-            return _buildInitialView();
-          }
-
-          if (state is UsersLoading) {
-            return Column(
-              children: [
-                _buildSearchBar(),
-                const Expanded(
-                  child: LoadingWidget(),
-                ),
-              ],
-            );
-          }
-
-          if (state is UsersError) {
-            return Column(
-              children: [
-                _buildSearchBar(),
-                Expanded(
-                  child: AppErrorWidget(
-                    message: state.message,
-                    onRetry: () {
-                      context.read<UsersBloc>().add(
-                        const LoadUsersEvent(),
-                      );
-                    },
+        body: BlocBuilder<UsersBloc, UsersState>(
+          builder: (_, state) {
+            if (state is UsersInitial) {
+              return _buildInitialView();
+            }
+      
+            if (state is UsersLoading) {
+              return Column(
+                children: [
+                  _buildSearchBar(),
+                  const Expanded(
+                    child: LoadingWidget(),
                   ),
-                ),
-              ],
-            );
-          }
-
-          if (state is UsersEmpty) {
-            return Column(
-              children: [
-                _buildSearchBar(),
-                const Expanded(
-                  child: EmptyWidget(
-                    message: 'No Users Found',
+                ],
+              );
+            }
+      
+            if (state is UsersError) {
+              return Column(
+                children: [
+                  _buildSearchBar(),
+                  Expanded(
+                    child: AppErrorWidget(
+                      message: state.message,
+                      onRetry: () {
+                        context.read<UsersBloc>().add(
+                          const LoadUsersEvent(),
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
-            );
-          }
-
-          if (state is UsersLoaded) {
-            return _buildUsersList(state);
-          }
-
-          return const SizedBox();
-        },
+                ],
+              );
+            }
+      
+            if (state is UsersEmpty) {
+              return Column(
+                children: [
+                  _buildSearchBar(),
+                  const Expanded(
+                    child: EmptyWidget(
+                      message: 'No Users Found',
+                    ),
+                  ),
+                ],
+              );
+            }
+      
+            if (state is UsersLoaded) {
+              return _buildUsersList(state);
+            }
+      
+            return const SizedBox();
+          },
+        ),
       ),
     );
   }

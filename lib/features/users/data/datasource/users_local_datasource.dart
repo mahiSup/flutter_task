@@ -13,6 +13,10 @@ abstract class UsersLocalDataSource {
 
   Future<List<GithubUserModel>>
   getFavorites();
+
+  Future<bool> isFavorite(
+      int userId,
+      );
 }
 
 class UsersLocalDataSourceImpl
@@ -56,5 +60,17 @@ class UsersLocalDataSourceImpl
       ),
     )
         .toList();
+  }
+
+  @override
+  Future<bool> isFavorite(
+      int userId,
+      ) async {
+    final favorites =
+    await getFavorites();
+
+    return favorites.any(
+          (user) => user.id == userId,
+    );
   }
 }
