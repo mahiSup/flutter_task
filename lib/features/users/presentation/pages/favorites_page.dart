@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:github_user_explorer/core/constants/constants.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../injection/dependency_injection.dart';
 import '../bloc/favorites/favorites_bloc.dart';
 import '../bloc/favorites/favorites_event.dart';
 import '../bloc/favorites/favorites_state.dart';
 
+import '../widgets/app_confirmation_dialog.dart';
 import '../widgets/loading_widget.dart';
 import '../widgets/error_widget.dart';
 import '../widgets/empty_widget.dart';
@@ -34,7 +37,7 @@ class _FavoritesPageState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Favorites'),
+        title: const Text(Constants.favoriteUsers),
       ),
       body: BlocBuilder<
           FavoritesBloc,
@@ -52,7 +55,7 @@ class _FavoritesPageState
 
           if (state is FavoritesEmpty) {
             return const EmptyWidget(
-              message: 'No Favorites Yet',
+              message: Constants.noFavoriteYet,
             );
           }
 
@@ -72,10 +75,22 @@ class _FavoritesPageState
                       extra: user.login,
                     );
                   },
-                  onFavoriteTap: () {
+                  onFavoriteTap: () async {
+                    final shouldRemove =
+                    await AppConfirmationDialog.show(
+                      context: context,
+                      title: Constants.removeFavorite,
+                      message:
+                      Constants.removeFavoriteMessage,
+                      confirmText: Constants.remove,
+                      cancelText: Constants.cancel,
+                      isDestructive: true,
+                    );
+
+                    if (!shouldRemove) return;
+
                     context
-                        .read<FavoritesBloc>()
-                        .add(
+                        .read<FavoritesBloc>().add(
                       RemoveFavoriteEvent(
                         user.id,
                       ),

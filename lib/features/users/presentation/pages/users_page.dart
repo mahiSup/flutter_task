@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/constants.dart';
 
+import '../../../../injection/dependency_injection.dart';
 import '../bloc/users/users_bloc.dart';
 import '../bloc/users/users_event.dart';
 import '../bloc/users/users_state.dart';
@@ -11,6 +12,7 @@ import '../bloc/users/users_state.dart';
 import '../bloc/favorites/favorites_bloc.dart';
 import '../bloc/favorites/favorites_event.dart';
 
+import '../widgets/app_confirmation_dialog.dart';
 import '../widgets/loading_widget.dart';
 import '../widgets/error_widget.dart';
 import '../widgets/empty_widget.dart';
@@ -31,10 +33,6 @@ class _UsersPageState extends State<UsersPage> {
     super.initState();
 
     _searchController = TextEditingController();
-
-    context.read<UsersBloc>().add(
-      const LoadUsersEvent(),
-    );
   }
 
   @override
@@ -46,7 +44,8 @@ class _UsersPageState extends State<UsersPage> {
   Future<void> _refreshUsers() async {
     _searchController.clear();
 
-    context.read<UsersBloc>().add(
+    context
+        .read<UsersBloc>().add(
       const LoadUsersEvent(),
     );
   }
@@ -118,6 +117,11 @@ class _UsersPageState extends State<UsersPage> {
             onFavoriteTap: () {
               context.read<FavoritesBloc>().add(
                 AddFavoriteEvent(user),
+              );
+
+              AppSnackBar.success(
+                context,
+                '${user.login} added to favorites',
               );
             },
           );
