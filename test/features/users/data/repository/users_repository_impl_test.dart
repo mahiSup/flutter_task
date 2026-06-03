@@ -1,8 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:github_user_explorer/core/constants/constants.dart';
-import 'package:github_user_explorer/core/errors/failures.dart';
 import 'package:github_user_explorer/features/users/data/models/github_user_model.dart';
 import 'package:github_user_explorer/features/users/data/users_repository_impl.dart';
 import 'package:mocktail/mocktail.dart';
