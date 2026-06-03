@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:github_user_explorer/core/constants/constants.dart';
 import 'package:github_user_explorer/core/utils/extensions.dart';
 
 import '../bloc/user_detail/user_detail_bloc.dart';
@@ -103,7 +104,7 @@ class _DetailsPageState
 
                   Text(
                     user.bio ??
-                        'No bio available',
+                        Constants.noBio,
                     textAlign:
                     TextAlign.center,
                   ),
@@ -116,12 +117,12 @@ class _DetailsPageState
                         .spaceEvenly,
                     children: [
                       _infoCard(
-                        'Followers',
+                        Constants.followers,
                         user.followers
                             .toString(),
                       ),
                       _infoCard(
-                        'Following',
+                        Constants.following,
                         user.following
                             .toString(),
                       ),
@@ -131,7 +132,7 @@ class _DetailsPageState
                   const SizedBox(height: 20),
 
                   _infoCard(
-                    'Repositories',
+                    Constants.repositories,
                     user.publicRepos
                         .toString(),
                   ),

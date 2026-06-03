@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:github_user_explorer/core/constants/constants.dart';
 
 import '../../../../core/errors/error_handler.dart';
 import '../../../../core/errors/failures.dart';
@@ -35,7 +36,7 @@ class UsersRepositoryImpl
       if (!await networkInfo.isConnected) {
         return const Left(
           NetworkFailure(
-            'No Internet Connection',
+            Constants.noInternetConnection,
           ),
         );
       }
@@ -60,7 +61,7 @@ class UsersRepositoryImpl
       if (!await networkInfo.isConnected) {
         return const Left(
           NetworkFailure(
-            'No Internet Connection',
+            Constants.noInternetConnection,
           ),
         );
       }
@@ -95,7 +96,7 @@ class UsersRepositoryImpl
     } catch (e) {
       return const Left(
         CacheFailure(
-          'Failed to save favorite',
+          Constants.failedToSave,
         ),
       );
     }
@@ -115,7 +116,7 @@ class UsersRepositoryImpl
     } catch (e) {
       return const Left(
         CacheFailure(
-          'Failed to remove favorite',
+          Constants.failedTORemove,
         ),
       );
     }
@@ -133,7 +134,7 @@ class UsersRepositoryImpl
     } catch (e) {
       return const Left(
         CacheFailure(
-          'Failed to load favorites',
+          Constants.failedToLoad,
         ),
       );
     }
@@ -151,7 +152,7 @@ class UsersRepositoryImpl
       if (!await networkInfo.isConnected) {
         return const Left(
           NetworkFailure(
-            'No Internet Connection',
+            Constants.noInternetConnection,
           ),
         );
       }

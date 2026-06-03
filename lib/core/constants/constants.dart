@@ -12,9 +12,20 @@ class Constants {
   static const String removeFavoriteMessage =
       'Are you sure you want to remove this user from favorites?';
 
-  static const String cancel = 'Cancel';
+  static const String failedToSave = 'Failed to save favorite';
+  static const String failedToLoad = 'Failed to load favorite';
+  static const String failedTORemove = 'Failed to load favorite';
 
+  static const String cancel = 'Cancel';
   static const String remove = 'Remove';
+
+  static const String noBio = 'No bio available';
+  static const String followers = 'Followers';
+  static const String following = 'Following';
+  static const String repositories = 'Repositories';
+
+
+
 
 
   static const connectionTimeout = 'Connection Timeout';

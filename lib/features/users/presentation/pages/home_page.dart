@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:github_user_explorer/features/users/presentation/pages/users_page.dart';
 
 import '../../../../core/constants/constants.dart';
-import '../../../../injection/dependency_injection.dart';
 import '../bloc/favorites/favorites_bloc.dart';
 import '../bloc/favorites/favorites_event.dart';
 import '../bloc/users/users_bloc.dart';

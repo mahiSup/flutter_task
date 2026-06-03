@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:github_user_explorer/core/constants/constants.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../injection/dependency_injection.dart';
 import '../bloc/favorites/favorites_bloc.dart';
 import '../bloc/favorites/favorites_event.dart';
 import '../bloc/favorites/favorites_state.dart';
